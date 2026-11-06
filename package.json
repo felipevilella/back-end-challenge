@@ -1,0 +1,41 @@
+{
+  "name": "distributed-wagering-processor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Distributed wagering processor using the econFin NestJS architecture",
+  "engines": {
+    "bun": ">=1.0.0 <2.0.0"
+  },
+  "scripts": {
+    "dev": "bun --watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "bun dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test test/unit",
+    "migration:run": "bun scripts/migrate.ts up",
+    "migration:revert": "bun scripts/migrate.ts down",
+    "infra:up": "docker compose up -d postgres localstack",
+    "infra:down": "docker compose down"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.0.0",
+    "@nestjs/common": "^10.4.0",
+    "@nestjs/core": "^10.4.0",
+    "@nestjs/platform-express": "^10.4.0",
+    "@nestjs/typeorm": "^10.0.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "decimal.js": "^10.4.3",
+    "dotenv": "^16.4.5",
+    "pg": "^8.12.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0",
+    "@types/node": "^22.0.0",
+    "bun": "^1.4.4",
+    "typescript": "^5.6.0"
+  }
+}
