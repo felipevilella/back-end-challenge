@@ -1,6 +1,6 @@
 # Distributed Wagering Processor
 
-Processador financeiro NestJS, Bun, TypeScript estrito, TypeORM, PostgreSQL e SQS. Organização baseada no `econFin-backEnd`: módulos por feature, serviços com `execute()`, contratos de repositório e composição via `UseCaseProxyModule`.
+Processador financeiro NestJS, Bun, TypeScript estrito, TypeORM, PostgreSQL e SQS.
 
 ## Executar localmente
 
