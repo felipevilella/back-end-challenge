@@ -1,13 +1,12 @@
-import 'reflect-metadata';
-import 'dotenv/config';
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './module/app.module';
+import { createApplication } from './bootstrap';
 import { EnvironmentConfigService } from './infra/database/config/environment-config.service';
+
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
-  app.enableShutdownHooks();
+  const app = await createApplication();
   await app.listen(app.get(EnvironmentConfigService).port);
 }
-bootstrap().catch(() => { console.error('Application startup failed; check dependency configuration'); process.exitCode = 1; });
+
+bootstrap().catch(() => {
+  console.error(JSON.stringify({ level: 'error', event: 'startup_failed' }));
+  process.exitCode = 1;
+});

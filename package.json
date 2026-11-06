@@ -15,7 +15,14 @@
     "migration:run": "bun scripts/migrate.ts up",
     "migration:revert": "bun scripts/migrate.ts down",
     "infra:up": "docker compose up -d postgres localstack",
-    "infra:down": "docker compose down"
+    "infra:down": "docker compose down",
+    "worker": "bun src/worker.ts",
+    "worker:prod": "bun dist/worker.js",
+    "test:integration": "bun test test/integration",
+    "test:all": "bun test",
+    "test:postgres": "bun scripts/test-postgres.ts",
+    "format": "prettier --write \"{src,scripts,test}/**/*.ts\" \"*.json\" \"*.yaml\"",
+    "format:check": "prettier --check \"{src,scripts,test}/**/*.ts\" \"*.json\" \"*.yaml\""
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.0.0",
@@ -36,6 +43,8 @@
     "@types/bun": "^1.0.0",
     "@types/node": "^22.0.0",
     "bun": "^1.4.4",
+    "embedded-postgres": "^18.6.0-beta.19",
+    "prettier": "^3.9.10",
     "typescript": "^5.6.0"
   }
 }

@@ -5,10 +5,10 @@ services:
       POSTGRES_USER: wager
       POSTGRES_PASSWORD: wager
       POSTGRES_DB: wager
-    ports: ["5432:5432"]
-    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    ports: ['5432:5432']
+    volumes: ['postgres-data:/var/lib/postgresql/data']
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U wager -d wager"]
+      test: ['CMD-SHELL', 'pg_isready -U wager -d wager']
       interval: 5s
       timeout: 3s
       retries: 10
@@ -16,9 +16,10 @@ services:
     image: localstack/localstack:4.0
     environment:
       SERVICES: sqs
+      SQS_ENDPOINT_STRATEGY: path
       AWS_DEFAULT_REGION: us-east-1
-    ports: ["4566:4566"]
-    volumes: ["./scripts/init-sqs.sh:/etc/localstack/init/ready.d/init-sqs.sh:ro"]
+    ports: ['4566:4566']
+    volumes: ['./scripts/init-sqs.sh:/etc/localstack/init/ready.d/init-sqs.sh:ro']
   api:
     build: .
     profiles: [app]
@@ -26,8 +27,22 @@ services:
     environment:
       DATABASE_URL: postgresql://wager:wager@postgres:5432/wager
       SQS_ENDPOINT: http://localstack:4566
-      SQS_QUEUE_URL: http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/wager-transactions.fifo
-    ports: ["3000:3000"]
+      SQS_QUEUE_URL: http://localstack:4566/queue/us-east-1/000000000000/wager-transactions.fifo
+    ports: ['3000:3000']
+    depends_on:
+      postgres: { condition: service_healthy }
+      localstack: { condition: service_started }
+  worker:
+    build: .
+    profiles: [app]
+    command: ['bun', 'dist/worker.js']
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://wager:wager@postgres:5432/wager
+      SQS_ENDPOINT: http://localstack:4566
+      SQS_QUEUE_URL: http://localstack:4566/queue/us-east-1/000000000000/wager-transactions.fifo
+      SQS_DLQ_URL: http://localstack:4566/queue/us-east-1/000000000000/wager-transactions-dlq.fifo
+      SQS_EVENTS_QUEUE_URL: http://localstack:4566/queue/us-east-1/000000000000/wager-events.fifo
     depends_on:
       postgres: { condition: service_healthy }
       localstack: { condition: service_started }
